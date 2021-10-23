@@ -1,0 +1,28 @@
+<h3 class="bg-primary text-center text-white p2">
+  Twitter sample stream summary
+</h3>
+
+<div class="container-fluid m-2">
+  <table class="table table-striped table-bordered table-sm">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Start time</th>
+        <th>End time</th>
+        <th>Total minutes</th>
+        <th>Total count</th>
+        <th>Average per minutes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of apiItems(); let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ item.startTime }}</td>
+        <td>{{ item.endTime }}</td>
+        <td>{{ item.totalCount }}</td>
+        <td>{{ item.averagePerMinute }}</td>
+        <td>{{ item.totalMinutes }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

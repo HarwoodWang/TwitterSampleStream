@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>a243f382-c9c6-4aa1-9e93-cf77ad19c7ca</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TwitterStreamProduce.BackgroundWorker\TwitterStreamProduce.BackgroundWorker.csproj" />
+    <ProjectReference Include="..\TwitterStreamProduce.SharedLibrary\TwitterStreamProduce.SharedLibrary.csproj" />
+  </ItemGroup>
+
+</Project>
