@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TwitterStreamProduce.SharedLibrary.Models;
@@ -57,6 +58,18 @@ namespace TwitterStreamProduce.SharedLibrary
 
             try
             {
+                IEnumerable<StreamDataEntity> selectedStreams = new List<StreamDataEntity>();
+
+                if (lstEntities.Count > 100)
+                {
+                    selectedStreams = lstEntities.Skip(Math.Max(0, lstEntities.Count() - 100)).Take(100);
+                }
+                else
+                {
+                    selectedStreams = lstEntities;
+                }
+
+
                 foreach (var entity in lstEntities)
                 {
                     OutputEntity outputentity = new OutputEntity();
