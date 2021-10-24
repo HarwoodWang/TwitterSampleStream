@@ -10,9 +10,10 @@ import { SignalrService } from "../services/signalr.service"
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
 
-  private apiData: StreamDataModel[] = new Array<StreamDataModel>();;
+  private apiData: StreamDataModel[] = new Array<StreamDataModel>();
+  private signalrData: StreamDataModel[] = new Array<StreamDataModel>();
 
   constructor(private apidatasource: ApiDataService, private signalRService: SignalrService ) {
     this.apidatasource.getData().subscribe(data => this.apiData = data);
@@ -22,8 +23,15 @@ export class HomeComponent {
     return this.signalRService.hubMessages;
   }
 
-  public get signalmessage(): Subject<string> {
-    return this.signalRService.messages;
+  ngOnInit(): void {
+    this.signalRService.init();
+    this.signalRService.messages.subscribe(message => {
+      this.signalrData = this.signalRService.receieve(message);
+    })
+  }
+
+  public get signalmessage(): StreamDataModel[] {
+    return this.signalrData;
   }
 
   public apiItems() : StreamDataModel[] {
