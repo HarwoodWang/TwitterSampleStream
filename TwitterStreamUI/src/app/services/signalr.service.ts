@@ -43,21 +43,11 @@ export class SignalrService implements OnInit, OnDestroy {
           reject();
         });
 
-        this.setSignalrClientMethods();
-    });
+        // This method will implement the methods defined in the ISignalrDemoHub interface in the SignalrDemo.Server .NET solution
+        this.connection.on('SendMessage', (message: string) => {
+          this.hubMessage.next(message);
+        });
+      });
+    }
   }
 
-  // This method will implement the methods defined in the ISignalrDemoHub interface in the SignalrDemo.Server .NET solution
-  public setSignalrClientMethods(): void {
-    this.connection.on('SendMessage', (message: string) => {
-      this.hubMessage.next(message);
-    });
-  }
-
-
-  // private setSignalrClientMethods(): void {
-  //   this.connection.on('DisplayMessage', (message: string) => {
-  //     this.hubMessage.next(message);
-  //   });
-  // }
-}

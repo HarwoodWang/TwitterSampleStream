@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { StreamDataModel } from "../models/streamdata.model";
+import { StreamDataModel, SummaryModel } from "../models/streamdata.model";
 
 import { ApiDataService } from "../services/api.service";
 import { SignalrService } from "../services/signalr.service"
@@ -18,13 +18,22 @@ export class HomeComponent {
     this.apidatasource.getData().subscribe(data => this.apiData = data);
    }
 
+   public get signalritems(): any {
+    return this.signalRService.hubMessage;
+  }
+
   public apiItems() : StreamDataModel[] {
-    console.log(this.apiData);
     return this.apiData;
   }
 
+  public apiSummary(): SummaryModel {
+    let totalCount = this.apiData.reduce((sum, current) => sum + current.totalCount, 0);
+    let totalMinutes = this.apiData.reduce((sum, current) => sum + current.totalMinutes, 0);
 
-  get signalritems(): any {
-    return this.signalRService.hubMessage;
+    let averageMinute = totalCount / totalMinutes;
+
+    return new SummaryModel(totalCount = totalCount,
+                    totalMinutes = totalMinutes,
+                    averageMinute = averageMinute);
   }
 }

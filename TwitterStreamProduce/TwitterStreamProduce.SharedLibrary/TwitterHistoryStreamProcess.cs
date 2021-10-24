@@ -70,7 +70,7 @@ namespace TwitterStreamProduce.SharedLibrary
                 }
 
 
-                foreach (var entity in lstEntities)
+                foreach (var entity in selectedStreams)
                 {
                     OutputEntity outputentity = new OutputEntity();
 
