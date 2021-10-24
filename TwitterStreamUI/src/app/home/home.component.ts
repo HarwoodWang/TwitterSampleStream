@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { StreamDataModel, SummaryModel } from "../models/streamdata.model";
 
 import { ApiDataService } from "../services/api.service";
@@ -18,8 +18,12 @@ export class HomeComponent {
     this.apidatasource.getData().subscribe(data => this.apiData = data);
    }
 
-   public get signalritems(): any {
-    return this.signalRService.hubMessage;
+   public get signalritems(): StreamDataModel[] {
+    return this.signalRService.hubMessages;
+  }
+
+  public get signalmessage(): Subject<string> {
+    return this.signalRService.messages;
   }
 
   public apiItems() : StreamDataModel[] {

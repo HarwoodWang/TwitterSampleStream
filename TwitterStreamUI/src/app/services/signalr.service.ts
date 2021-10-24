@@ -1,53 +1,50 @@
 import { Injectable, OnInit, OnDestroy } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
+import { StreamDataModel } from "../models/streamdata.model";
+import { map } from "rxjs/operators";
+import { debug } from 'console';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SignalrService implements OnInit, OnDestroy {
-  connection!: signalR.HubConnection;
-  hubMessage: BehaviorSubject<string>;
+export class SignalrService {
+  private hubConnection!: signalR.HubConnection;
+  public hubMessages: StreamDataModel[];
+
+  public messages: Subject<string> = new Subject();
 
   constructor() {
-    this.hubMessage = new BehaviorSubject<string>(null!);
-  }
+    this.hubMessages = new Array<StreamDataModel>();
+  //}
 
-  ngOnInit(): void {
-    this.initiateSignalrConnection();
-  }
 
-  ngOnDestroy(): void {
-    this.connection.stop();
-  }
+  //public ngOnInit() {
 
-  // Establish a connection to the SignalR server hub
-  private initiateSignalrConnection(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.connection = new signalR.HubConnectionBuilder()
-        .configureLogging(signalR.LogLevel.Information)
-        .withUrl(environment.signalrHubUrl) // the SignalR server url as set in the .NET Project properties and Startup class
-        .build();
+    this.hubConnection = new signalR.HubConnectionBuilder()
+                              .configureLogging(signalR.LogLevel.Information)
+                              .withUrl(environment.signalrHubUrl) // the SignalR server url as set in the .NET Project properties and Startup class
+                              .build();
 
-      this.connection
-        .start()
-        .then(() => {
-          console.log(
-            `SignalR connection success! connectionId: ${this.connection.connectionId} `
-          );
-          resolve();
-        })
-        .catch((error) => {
-          console.log(`SignalR connection error: ${error}`);
-          reject();
-        });
+    this.hubConnection
+      .start()
+      .then(() => {
+        debugger;
+        console.log('Connection started');
+      })
+      .catch(err => { 
+        debugger;
+        console.log('Error while starting connection: ' + err);
+      });
 
-        // This method will implement the methods defined in the ISignalrDemoHub interface in the SignalrDemo.Server .NET solution
-        this.connection.on('SendMessage', (message: string) => {
-          this.hubMessage.next(message);
-        });
+      this.hubConnection.on("SendMQMessage", (data: any) => {
+        debugger;
+        this.messages.next(data);
+        this.hubConnection.invoke('ReceiveMQMessage', data).catch(err => console.log(err));
+
+
+        //console.log(JSON.stringify(this.messages));
       });
     }
   }
-

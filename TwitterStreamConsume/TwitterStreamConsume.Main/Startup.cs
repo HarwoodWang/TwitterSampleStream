@@ -33,16 +33,17 @@ namespace TwitterStreamConsume.Main
             var loggingOptions = config.GetSection("Log4NetCore").Get<Log4NetProviderOptions>();
             services.AddLogging(configure => configure.AddLog4Net(loggingOptions));
 
-            services.AddSignalR();
             services.AddMemoryCache();
             services.AddSingleton<MessageHub>();
 
-            services.AddCors(o => o.AddPolicy("TwitterSampleStreamPolicy", builder =>
+            services.AddCors(o => o.AddPolicy("TwitterUIPolicy", builder =>
             {
                 builder.AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader();
             }));
+
+            services.AddSignalR();
 
             services.AddHostedService<ConsumeRabbitMQHostedService>();
         }
@@ -61,16 +62,20 @@ namespace TwitterStreamConsume.Main
                 app.UseHsts();
             }
 
-            app.UseCors(o => o.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
+            //app.UseCors("TwitterUIPolicy");
+            app.UseCors(builder =>
+            {
+                builder.WithOrigins("http://localhost:4200")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
 
             app.UseEndpoints(configure =>
             {

@@ -62,7 +62,7 @@ namespace TwitterStreamProduce.SharedLibrary
 
                 if (lstEntities.Count > 100)
                 {
-                    selectedStreams = lstEntities.Skip(Math.Max(0, lstEntities.Count() - 100)).Take(100);
+                    selectedStreams = lstEntities.Take(100);
                 }
                 else
                 {

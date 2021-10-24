@@ -84,10 +84,10 @@ namespace TwitterStreamConsume.Main
                     _channel.BasicAck(ea.DeliveryTag, false);
                 };
 
-                consumer.Shutdown += OnConsumerShutdown;
-                consumer.Registered += OnConsumerRegistered;
-                consumer.Unregistered += OnConsumerUnregistered;
-                consumer.ConsumerCancelled += OnConsumerConsumerCancelled;
+                //consumer.Shutdown += OnConsumerShutdown;
+                //consumer.Registered += OnConsumerRegistered;
+                //consumer.Unregistered += OnConsumerUnregistered;
+                //consumer.ConsumerCancelled += OnConsumerConsumerCancelled;
 
                 _channel.BasicConsume(queue: "randomStreamData",
                                      autoAck: true,
