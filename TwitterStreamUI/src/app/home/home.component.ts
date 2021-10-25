@@ -25,7 +25,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.signalRService.init();
-    this.signalRService.messages.subscribe(message => this.signalrData = this.signalRService.receieve(message));
+    this.signalRService.messages.subscribe((message: SignalRDataModel) => this.signalrData = this.signalRService.receieve(message));
   }
 
   public signalrItems(): SignalRDataModel[] {

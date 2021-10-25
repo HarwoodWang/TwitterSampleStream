@@ -15,12 +15,19 @@ namespace TwitterStreamProduce.SharedLibrary
             string strFullName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, strFileName);
             string strJson = SerializeDeserialize.SerializeObject<OutputEntity>(entity);
 
-            lock (_fileAccess)
+            try
             {
-                using (StreamWriter sw = File.AppendText(strFullName))
+                lock (_fileAccess)
                 {
-                    sw.WriteLine(strJson);
+                    using (StreamWriter sw = File.AppendText(strFullName))
+                    {
+                        sw.WriteLine(strJson);
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
         }
     }

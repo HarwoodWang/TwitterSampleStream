@@ -47,15 +47,29 @@ export class SignalrService {
     const messages = this.load();
     messages.unshift(message);
     localStorage.setItem("messages", JSON.stringify(messages));
+    //localStorage.clear();
     return messages;
   }
 
   load(): SignalRDataModel[] {
     const messagesLocal = localStorage.getItem("messages");
     let messagesResponse = [];
+    let messagesResponseJson: SignalRDataModel[] = [];
+
     if (messagesLocal !== null) {
       messagesResponse = JSON.parse(messagesLocal);
+      //messagesResponse = messagesResponse[messagesResponse.length - 1];
+
+      for(var i = 0; i < messagesResponse.length; i++)
+      {       
+        var strJson = JSON.stringify(messagesResponse[i]);
+
+        if ( strJson !== 'undefined' && strJson !== null ) {  
+          var objJson: SignalRDataModel = JSON.parse(strJson);
+          messagesResponseJson.push(objJson);
+        }
+      }
     }
-    return messagesResponse;
+    return messagesResponseJson;
   }
 }
