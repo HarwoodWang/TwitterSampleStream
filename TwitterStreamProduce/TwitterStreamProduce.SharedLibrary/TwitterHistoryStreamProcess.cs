@@ -12,7 +12,6 @@ namespace TwitterStreamProduce.SharedLibrary
 {
     public class TwitterHistoryStreamProcess
     {
-        private static readonly object _fileAccess = new object();
         private ILogger<TwitterHistoryStreamProcess> _logger;
 
         public TwitterHistoryStreamProcess(ILoggerFactory loggerFactory)
@@ -32,17 +31,14 @@ namespace TwitterStreamProduce.SharedLibrary
 
                 if (!File.Exists(strFullName)) return null;
 
-                lock (_fileAccess)
+                using (StreamReader reader = new StreamReader(strFullName))
                 {
-                    using (StreamReader reader = new StreamReader(strFullName))
+                    while (!reader.EndOfStream)
                     {
-                        while (!reader.EndOfStream)
-                        {
-                            string strJson = reader.ReadLine();
-                            StreamDataEntity entity = JsonConvert.DeserializeObject<StreamDataEntity>(strJson);
+                        string strJson = reader.ReadLine();
+                        StreamDataEntity entity = JsonConvert.DeserializeObject<StreamDataEntity>(strJson);
 
-                            lstEntities.Add(entity);
-                        }
+                        lstEntities.Add(entity);
                     }
                 }
 
