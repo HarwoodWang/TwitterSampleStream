@@ -2,7 +2,7 @@ import { Injectable, OnInit, OnDestroy } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
-import { StreamDataModel } from "../models/streamdata.model";
+import { SignalRDataModel } from "../models/streamdata.model";
 import { map } from "rxjs/operators";
 import { debug } from 'console';
 
@@ -11,12 +11,12 @@ import { debug } from 'console';
 })
 export class SignalrService {
   private hubConnection!: signalR.HubConnection;
-  public hubMessages: StreamDataModel[];
+  public hubMessages: SignalRDataModel[];
 
-  public messages: Subject<StreamDataModel> = new Subject();
+  public messages: Subject<SignalRDataModel> = new Subject();
 
   constructor() {
-    this.hubMessages = new Array<StreamDataModel>();
+    this.hubMessages = new Array<SignalRDataModel>();
   }
 
   public init() {
@@ -35,22 +35,22 @@ export class SignalrService {
       });
 
     this.hubConnection.on("ReceiveMQMessage", (data: any) => {
-      debugger;
+      //debugger;
       this.messages.next(data);
       //console.log(JSON.stringify(this.messages));
     });
   }
 
-  receieve(message: StreamDataModel): StreamDataModel[] {
+  receieve(message: SignalRDataModel): SignalRDataModel[] {
     // read in from local strorage
-    debugger;
+    //debugger;
     const messages = this.load();
     messages.unshift(message);
     localStorage.setItem("messages", JSON.stringify(messages));
     return messages;
   }
 
-  load(): StreamDataModel[] {
+  load(): SignalRDataModel[] {
     const messagesLocal = localStorage.getItem("messages");
     let messagesResponse = [];
     if (messagesLocal !== null) {

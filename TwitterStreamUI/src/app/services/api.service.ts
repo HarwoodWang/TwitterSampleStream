@@ -1,7 +1,7 @@
 import { Injectable,  Inject, InjectionToken } from "@angular/core";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { Observable, interval } from "rxjs";
-import { StreamDataModel } from "../models/streamdata.model";
+import { ApiDataModel } from "../models/streamdata.model";
 import { environment } from '../../environments/environment';
 import { map } from "rxjs/operators";
 
@@ -14,9 +14,9 @@ export class ApiDataService  {
 
   constructor(private http: HttpClient) { }
 
-  public getData(): Observable<StreamDataModel[]> {
-    return this.http.get<StreamDataModel[]>(this.accessPointUrl)
-              .pipe(map((response: StreamDataModel[]) => response));
+  public getData(): Observable<ApiDataModel[]> {
+    return this.http.get<ApiDataModel[]>(this.accessPointUrl)
+              .pipe(map((response: ApiDataModel[]) => response));
   }
 
   private handleError(error: any): Promise<any> {

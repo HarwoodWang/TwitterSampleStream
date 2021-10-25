@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { StreamDataModel, SummaryModel } from "../models/streamdata.model";
+import { ApiDataModel, SignalRDataModel, SummaryModel } from "../models/streamdata.model";
 
 import { ApiDataService } from "../services/api.service";
 import { SignalrService } from "../services/signalr.service"
@@ -12,14 +12,14 @@ import { SignalrService } from "../services/signalr.service"
 })
 export class HomeComponent implements OnInit {
 
-  private apiData: StreamDataModel[] = new Array<StreamDataModel>();
-  private signalrData: StreamDataModel[] = new Array<StreamDataModel>();
+  private apiData: ApiDataModel[] = new Array<ApiDataModel>();
+  private signalrData: SignalRDataModel[] = new Array<SignalRDataModel>();
 
   constructor(private apidatasource: ApiDataService, private signalRService: SignalrService ) {
     this.apidatasource.getData().subscribe(data => this.apiData = data);
    }
 
-   public get signalritems(): StreamDataModel[] {
+   public get signalritems(): SignalRDataModel[] {
     return this.signalRService.hubMessages;
   }
 
@@ -31,11 +31,11 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  public signalrItems(): StreamDataModel[] {
+  public signalrItems(): SignalRDataModel[] {
     return this.signalrData;
   }
 
-  public apiItems() : StreamDataModel[] {
+  public apiItems() : ApiDataModel[] {
     return this.apiData;
   }
 
