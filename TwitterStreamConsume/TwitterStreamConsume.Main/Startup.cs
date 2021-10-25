@@ -11,7 +11,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using TwitterStreamConsume.Main.BackgroundTasks;
 using TwitterStreamConsume.Main.Hubs;
+using TwitterStreamConsume.Main.RabbitMQServices;
 
 namespace TwitterStreamConsume.Main
 {
@@ -34,6 +36,10 @@ namespace TwitterStreamConsume.Main
             services.AddLogging(configure => configure.AddLog4Net(loggingOptions));
 
             services.AddMemoryCache();
+            services.AddSingleton<IConsumeService, ConsumeService>();
+
+            services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
+
             services.AddSingleton<MessageHub>();
 
             services.AddCors(o => o.AddPolicy("TwitterUIPolicy", builder =>
@@ -45,7 +51,7 @@ namespace TwitterStreamConsume.Main
 
             services.AddSignalR();
 
-            services.AddHostedService<ConsumeRabbitMQHostedService>();
+            services.AddHostedService<ConsumeScopedServiceHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

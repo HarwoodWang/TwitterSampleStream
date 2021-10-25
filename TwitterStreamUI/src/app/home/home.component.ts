@@ -25,12 +25,13 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.signalRService.init();
-  }
 
-  public signalrItems(): StreamDataModel[] {
     this.signalRService.messages.subscribe(message => {
       this.signalrData = this.signalRService.receieve(message);
     });
+  }
+
+  public signalrItems(): StreamDataModel[] {
     return this.signalrData;
   }
 

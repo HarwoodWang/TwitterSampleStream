@@ -35,6 +35,7 @@ export class SignalrService {
       });
 
     this.hubConnection.on("ReceiveMQMessage", (data: any) => {
+      debugger;
       this.messages.next(data);
       //console.log(JSON.stringify(this.messages));
     });
@@ -42,6 +43,7 @@ export class SignalrService {
 
   receieve(message: StreamDataModel): StreamDataModel[] {
     // read in from local strorage
+    debugger;
     const messages = this.load();
     messages.unshift(message);
     localStorage.setItem("messages", JSON.stringify(messages));
