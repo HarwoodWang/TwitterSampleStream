@@ -29,7 +29,10 @@ export class HomeComponent implements OnInit {
   }
 
   public signalrItems(): SignalRDataModel[] {
-    return this.signalrData;
+    if(this.signalrData) {
+      return this.signalrData.map(x => JSON.parse(x.toString()));
+    }
+    return [];
   }
 
   public apiItems() : ApiDataModel[] {
