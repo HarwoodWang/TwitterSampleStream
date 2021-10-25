@@ -8,14 +8,19 @@ namespace TwitterStreamProduce.SharedLibrary
 {
     public class OutputToFile
     {
+        private static readonly object _fileAccess = new object();
+
         public static void WriteSummaryToFile(OutputEntity entity, string strFileName)
         {
             string strFullName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, strFileName);
             string strJson = SerializeDeserialize.SerializeObject<OutputEntity>(entity);
 
-            using (StreamWriter sw = File.AppendText(strFullName))
+            lock (_fileAccess)
             {
-                sw.WriteLine(strJson);
+                using (StreamWriter sw = File.AppendText(strFullName))
+                {
+                    sw.WriteLine(strJson);
+                }
             }
         }
     }

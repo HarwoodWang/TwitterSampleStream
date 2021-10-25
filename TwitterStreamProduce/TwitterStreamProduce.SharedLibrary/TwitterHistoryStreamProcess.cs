@@ -12,6 +12,7 @@ namespace TwitterStreamProduce.SharedLibrary
 {
     public class TwitterHistoryStreamProcess
     {
+        private static readonly object _fileAccess = new object();
         private ILogger<TwitterHistoryStreamProcess> _logger;
 
         public TwitterHistoryStreamProcess(ILoggerFactory loggerFactory)
@@ -31,14 +32,17 @@ namespace TwitterStreamProduce.SharedLibrary
 
                 if (!File.Exists(strFullName)) return null;
 
-                using (StreamReader reader = new StreamReader(strFullName))
+                lock (_fileAccess)
                 {
-                    while (!reader.EndOfStream)
+                    using (StreamReader reader = new StreamReader(strFullName))
                     {
-                        string strJson = await reader.ReadLineAsync();
-                        StreamDataEntity entity = JsonConvert.DeserializeObject<StreamDataEntity>(strJson);
+                        while (!reader.EndOfStream)
+                        {
+                            string strJson = reader.ReadLine();
+                            StreamDataEntity entity = JsonConvert.DeserializeObject<StreamDataEntity>(strJson);
 
-                        lstEntities.Add(entity);
+                            lstEntities.Add(entity);
+                        }
                     }
                 }
 
@@ -78,23 +82,9 @@ namespace TwitterStreamProduce.SharedLibrary
                     outputentity.EndTime = entity.EndTime;
                     outputentity.TotalCount = entity.Count;
                     outputentity.TotalMinutes = entity.EndTime.Subtract(entity.StartTime).TotalMinutes;
-                    outputentity.AveragePerMinutes = entity.Count / outputentity.TotalMinutes;
+                    outputentity.AveragePerMinute = entity.Count / outputentity.TotalMinutes;
 
                     outputs.Add(outputentity);
-
-                    //DateTime dtStartTime = lstEntities.Select(r => r.StartTime).Min();
-                    //DateTime dtEndTime = lstEntities.Select(r => r.EndTime).Max();
-                    //ulong totalCount = (ulong)Math.Floor(lstEntities.Select(r => r.Count).Sum() / 1000.0);
-                    //double totalMinutes = dtEndTime.Subtract(dtStartTime).TotalMinutes;
-
-                    //double dblAvgCount = totalCount / totalMinutes;
-
-                    //output.StartTime = dtStartTime;
-                    //output.EndTime = dtEndTime;
-                    //output.TotalCount = totalCount;
-                    //output.AveragePerMinutes = dblAvgCount;
-                    //output.TotalMinutes = totalMinutes;
-
                 }
             }
             catch (Exception ex)

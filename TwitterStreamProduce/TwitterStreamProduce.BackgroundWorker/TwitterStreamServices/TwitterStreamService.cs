@@ -98,7 +98,7 @@ namespace TwitterStreamProduce.BackgroundWorker.TwitterStreamServices
                                                 EndTime = DateTime.Now,
                                                 TotalCount = totalcount,
                                                 TotalMinutes = totalminutes,
-                                                AveragePerMinutes = totalcount / totalminutes
+                                                AveragePerMinute = totalcount / totalminutes
                                             };
 
                                             dtStart = DateTime.Now;
@@ -130,7 +130,7 @@ namespace TwitterStreamProduce.BackgroundWorker.TwitterStreamServices
                         EndTime = DateTime.Now,
                         TotalCount = totalcount,
                         TotalMinutes = totalminutes,
-                        AveragePerMinutes = totalcount / totalminutes
+                        AveragePerMinute = totalcount / totalminutes
                     };
 
                     collection.Enqueue(minuteEntity);

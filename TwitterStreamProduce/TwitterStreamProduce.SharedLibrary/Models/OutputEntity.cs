@@ -12,7 +12,7 @@ namespace TwitterStreamProduce.SharedLibrary.Models
 
         public long TotalCount { get; set; }
 
-        public double AveragePerMinutes { get; set; }
+        public double AveragePerMinute { get; set; }
 
         public double TotalMinutes { get; set; }
     }

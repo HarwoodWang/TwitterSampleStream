@@ -25,10 +25,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.signalRService.init();
-
-    this.signalRService.messages.subscribe(message => {
-      this.signalrData = this.signalRService.receieve(message);
-    });
+    this.signalRService.messages.subscribe(message => this.signalrData = this.signalRService.receieve(message));
   }
 
   public signalrItems(): SignalRDataModel[] {
@@ -49,4 +46,17 @@ export class HomeComponent implements OnInit {
                     totalMinutes = totalMinutes,
                     averageMinute = averageMinute);
   }
+
+  public signalrSummary(): SummaryModel {
+    let totalCount = this.signalrData.reduce((sum, current) => sum + current.TotalCount, 0);
+    let totalMinutes = this.signalrData.reduce((sum, current) => sum + current.TotalMinutes, 0);
+
+    let averageMinute = totalCount / totalMinutes;
+
+    return new SummaryModel(totalCount = totalCount,
+                    totalMinutes = totalMinutes,
+                    averageMinute = averageMinute);
+  }
 }
+
+
