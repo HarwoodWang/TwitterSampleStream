@@ -104,7 +104,7 @@ namespace TwitterStreamProduce.BackgroundWorker.TwitterStreamServices
                                         });
 
                                         await task.ContinueWith((tpl) => OutputToFile.WriteSummaryToFile(tpl.Result.Item2, strHistorySummaryFileName));
-                                        await task.ContinueWith((tpl) => _mqServices.PubMessages(tpl.Result.Item1));
+                                        await task.ContinueWith((tpl) => _mqServices.PubMessages(tpl.Result.Item2));
                                     }
                                 } while (!reader.EndOfStream);
                             }
@@ -126,7 +126,7 @@ namespace TwitterStreamProduce.BackgroundWorker.TwitterStreamServices
                     collection.Enqueue(minuteEntity);
 
                     await Task.Run(() => OutputToFile.WriteSummaryToFile(minuteEntity, strHistorySummaryFileName));
-                    await Task.Run(() => _mqServices.PubMessages(collection));
+                    await Task.Run(() => _mqServices.PubMessages(minuteEntity));
                 }
             }
             catch (Exception ex)

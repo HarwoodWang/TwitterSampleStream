@@ -45,7 +45,6 @@ namespace TwitterStreamConsume.Main
 
             // create channel
             _channel = _connection.CreateModel();
-            _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -68,26 +67,10 @@ namespace TwitterStreamConsume.Main
                     byte[] body = ea.Body.ToArray();
                     string content = System.Text.Encoding.UTF8.GetString(body);
 
-                    Dictionary<string, int> messages = null;
-                    _memoryCache.TryGetValue<Dictionary<string, int>>("messages", out messages);
-
-                    if (messages == null) messages = new Dictionary<string, int>();
-
-                    Thread.Sleep(100);
-
-                    messages.Remove(content);
-                    _memoryCache.Set<Dictionary<string, int>>("messages", messages);
-
-                    //if (messages.Any())
-                        Task.Run(async () => await _hub.SendMQMessage(content));
+                    Task.Run(async () => await _hub.SendMQMessage(content));
 
                     _channel.BasicAck(ea.DeliveryTag, false);
                 };
-
-                //consumer.Shutdown += OnConsumerShutdown;
-                //consumer.Registered += OnConsumerRegistered;
-                //consumer.Unregistered += OnConsumerUnregistered;
-                //consumer.ConsumerCancelled += OnConsumerConsumerCancelled;
 
                 _channel.BasicConsume(queue: "randomStreamData",
                                      autoAck: true,
@@ -99,32 +82,7 @@ namespace TwitterStreamConsume.Main
             }
 
             return Task.CompletedTask;
-        }
-
-        private void RabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs e)
-        {
-            _logger.LogInformation($"connection shut down {e.ReplyText}");
-        }
-
-        private void OnConsumerConsumerCancelled(object sender, ConsumerEventArgs e)
-        {
-            _logger.LogInformation($"consumer cancelled {e.ConsumerTags}");
-        }
-
-        private void OnConsumerUnregistered(object sender, ConsumerEventArgs e)
-        {
-            _logger.LogInformation($"consumer unregistered {e.ConsumerTags}");
-        }
-
-        private void OnConsumerRegistered(object sender, ConsumerEventArgs e)
-        {
-            _logger.LogInformation($"consumer registered {e.ConsumerTags}");
-        }
-
-        private void OnConsumerShutdown(object sender, ShutdownEventArgs e)
-        {
-            _logger.LogInformation($"consumer shutdown {e.ReplyText}");
-        }
+        }   
 
         public override void Dispose()
         {

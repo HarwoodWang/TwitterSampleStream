@@ -5,7 +5,6 @@ import * as signalR from '@microsoft/signalr';
 import { StreamDataModel } from "../models/streamdata.model";
 import { map } from "rxjs/operators";
 import { debug } from 'console';
-import { SSL_OP_NETSCAPE_CA_DN_BUG } from 'constants';
 
 @Injectable({
   providedIn: 'root'
@@ -29,19 +28,16 @@ export class SignalrService {
     this.hubConnection
       .start()
       .then(() => {
-        debugger;
-        console.log('Connection started');
+        console.log('Connection started ' + this.hubConnection.connectionId);
       })
       .catch(err => { 
-        debugger;
         console.log('Error while starting connection: ' + err);
       });
 
-      this.hubConnection.on("SendMQMessage", (data: any) => {
-        debugger;
-        this.messages.next(data);
-        //console.log(JSON.stringify(this.messages));
-      });
+    this.hubConnection.on("ReceiveMQMessage", (data: any) => {
+      this.messages.next(data);
+      //console.log(JSON.stringify(this.messages));
+    });
   }
 
   receieve(message: StreamDataModel): StreamDataModel[] {

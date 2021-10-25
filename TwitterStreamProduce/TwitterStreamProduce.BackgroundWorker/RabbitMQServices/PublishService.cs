@@ -22,11 +22,11 @@ namespace TwitterStreamProduce.BackgroundWorker.RabbitMQServices
             this._memoryCache = memoryCache;
         }
 
-        public bool PubMessages(ConcurrentQueue<StreamDataEntity> queues)
+        public bool PubMessages(StreamDataEntity queue)
         {
             _logger.LogInformation("Start : Getting stream summary in method PublishService::PubMessages()");
 
-            string strQueueJson = SerializeDeserialize.SerializeObjects(queues);
+            string strQueueJson = SerializeDeserialize.SerializeObject(queue);
             bool bPubMesage = true;
 
             try
@@ -49,16 +49,7 @@ namespace TwitterStreamProduce.BackgroundWorker.RabbitMQServices
                                              autoDelete: false,
                                              arguments: null);
 
-                        _messageCount = queues.Count;
-
-                        Dictionary<string, int> messages = null;
-                        _memoryCache.TryGetValue<Dictionary<string, int>>("messages", out messages);
-
-                        if (messages == null) messages = new Dictionary<string, int>();
-                        messages.Add(strQueueJson, _messageCount);
-                        _memoryCache.Set<Dictionary<string, int>>("messages", messages);
-
-                        var body = Encoding.UTF8.GetBytes(strQueueJson);
+                         var body = Encoding.UTF8.GetBytes(strQueueJson);
 
                         channel.BasicPublish(exchange: "",
                                              routingKey: "randomStreamData",
