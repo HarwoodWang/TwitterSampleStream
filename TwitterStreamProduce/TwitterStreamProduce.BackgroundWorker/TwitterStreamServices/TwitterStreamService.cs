@@ -30,7 +30,7 @@ namespace TwitterStreamProduce.BackgroundWorker.TwitterStreamServices
         public SemaphoreSlim _semaphoregate = new SemaphoreSlim(1);
 
 
-        private ConcurrentQueue<StreamDataEntity> collection;
+        private ConcurrentQueue<OutputEntity> collection;
 
         public TwitterStreamService(TwitterStreamDataConifiguration config,
                                 SecretKeyConfiguration configSecretKey,
@@ -48,7 +48,7 @@ namespace TwitterStreamProduce.BackgroundWorker.TwitterStreamServices
             this.maxQueueCount = config.MaxQueueCount;
 
             _mqServices = mqServices;
-            collection = new ConcurrentQueue<StreamDataEntity>();
+            collection = new ConcurrentQueue<OutputEntity>();
         }
 
         public async Task RunTwitterStreamReader(CancellationToken ct)
@@ -89,18 +89,23 @@ namespace TwitterStreamProduce.BackgroundWorker.TwitterStreamServices
                                         {
                                             int minuteTotalCount = Convert.ToInt32(Math.Floor(totalCount / 1000.0));
 
-                                            StreamDataEntity minuteEntity = new StreamDataEntity()
+                                            long totalcount = Convert.ToInt64(Math.Floor(totalCount / 1000.0));
+                                            double totalminutes = DateTime.Now.Subtract(dtStart).TotalMinutes;
+
+                                            OutputEntity minuteEntity = new OutputEntity()
                                             {
                                                 StartTime = dtStart,
                                                 EndTime = DateTime.Now,
-                                                Count = Convert.ToInt64(Math.Floor(totalCount / 1000.0))
+                                                TotalCount = totalcount,
+                                                TotalMinutes = totalminutes,
+                                                AveragePerMinutes = totalcount / totalminutes
                                             };
 
                                             dtStart = DateTime.Now;
                                             totalCount = totalCount - minuteTotalCount;
 
                                             collection.Enqueue(minuteEntity);
-                                            return new Tuple<ConcurrentQueue<StreamDataEntity>, StreamDataEntity>(collection, minuteEntity);
+                                            return new Tuple<ConcurrentQueue<OutputEntity>, OutputEntity>(collection, minuteEntity);
                                         });
 
                                         await task.ContinueWith((tpl) => OutputToFile.WriteSummaryToFile(tpl.Result.Item2, strHistorySummaryFileName));
@@ -116,11 +121,16 @@ namespace TwitterStreamProduce.BackgroundWorker.TwitterStreamServices
 
                 if (ct.IsCancellationRequested)
                 {
-                    StreamDataEntity minuteEntity = new StreamDataEntity()
+                    long totalcount = Convert.ToInt64(Math.Floor(totalCount / 1000.0));
+                    double totalminutes = DateTime.Now.Subtract(dtStart).TotalMinutes;
+
+                    OutputEntity minuteEntity = new OutputEntity()
                     {
                         StartTime = dtStart,
                         EndTime = DateTime.Now,
-                        Count = Convert.ToInt64(totalCount)
+                        TotalCount = totalcount,
+                        TotalMinutes = totalminutes,
+                        AveragePerMinutes = totalcount / totalminutes
                     };
 
                     collection.Enqueue(minuteEntity);

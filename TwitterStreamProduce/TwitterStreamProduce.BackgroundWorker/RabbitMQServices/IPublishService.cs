@@ -8,6 +8,6 @@ namespace TwitterStreamProduce.BackgroundWorker.RabbitMQServices
 {
     public interface IPublishService
     {
-        bool PubMessages(StreamDataEntity queues);
+        bool PubMessages(OutputEntity queues);
     }
 }

@@ -22,14 +22,14 @@ namespace TwitterStreamProduce.SharedLibrary
             return strQueueJson;
         }
 
-        public static string SerializeObject(StreamDataEntity entity)
+        public static string SerializeObject<T>(T entity)
         {
             var options = new JsonSerializerOptions
             {
                 WriteIndented = false
             };
 
-            string strQueueJson = System.Text.Json.JsonSerializer.Serialize<StreamDataEntity>(entity, options);
+            string strQueueJson = System.Text.Json.JsonSerializer.Serialize<T>(entity, options);
 
             return strQueueJson;
         }

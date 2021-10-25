@@ -22,7 +22,7 @@ namespace TwitterStreamProduce.BackgroundWorker.RabbitMQServices
             this._memoryCache = memoryCache;
         }
 
-        public bool PubMessages(StreamDataEntity queue)
+        public bool PubMessages(OutputEntity queue)
         {
             _logger.LogInformation("Start : Getting stream summary in method PublishService::PubMessages()");
 
