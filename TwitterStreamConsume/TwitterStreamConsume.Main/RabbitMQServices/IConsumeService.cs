@@ -8,6 +8,6 @@ namespace TwitterStreamConsume.Main.RabbitMQServices
 {
     public interface IConsumeService
     {
-        void RunConsumeMQ(CancellationToken stoppingToken);
+        Task ExecuteRabbitMQ(CancellationToken stoppingToken);
     }
 }

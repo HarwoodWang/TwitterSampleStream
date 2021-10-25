@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TwitterStreamConsume.Main.Hubs;
 using TwitterStreamConsume.Main.RabbitMQServices;
 
 namespace TwitterStreamConsume.Main.BackgroundTasks
@@ -17,7 +19,7 @@ namespace TwitterStreamConsume.Main.BackgroundTasks
         public ScopedProcessingService(ILoggerFactory loggery, IConsumeService mqServices)
         {
             _loggery = loggery;
-            _logger = loggery.CreateLogger<ScopedProcessingService>(); ;
+            _logger = loggery.CreateLogger<ScopedProcessingService>();
 
             _mqServices = mqServices;
         }
@@ -30,7 +32,7 @@ namespace TwitterStreamConsume.Main.BackgroundTasks
             {
                 if (!stoppingToken.IsCancellationRequested)
                 {
-                    _mqServices.RunConsumeMQ(stoppingToken);
+                    await _mqServices.ExecuteRabbitMQ(stoppingToken);
                 }
             }
             catch (Exception ex)
