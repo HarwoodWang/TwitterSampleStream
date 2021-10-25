@@ -90,7 +90,7 @@ namespace TwitterStreamProduce.BackgroundWorker.TwitterStreamServices
                                             int minuteTotalCount = Convert.ToInt32(Math.Floor(totalCount / 1000.0));
 
                                             long totalcount = Convert.ToInt64(Math.Floor(totalCount / 1000.0));
-                                            double totalminutes = DateTime.Now.Subtract(dtStart).TotalMinutes;
+                                            double totalminutes = Math.Round(DateTime.Now.Subtract(dtStart).TotalMinutes, 3);
 
                                             OutputEntity minuteEntity = new OutputEntity()
                                             {
@@ -122,7 +122,7 @@ namespace TwitterStreamProduce.BackgroundWorker.TwitterStreamServices
                 if (ct.IsCancellationRequested)
                 {
                     long totalcount = Convert.ToInt64(Math.Floor(totalCount / 1000.0));
-                    double totalminutes = DateTime.Now.Subtract(dtStart).TotalMinutes;
+                    double totalminutes = Math.Round(DateTime.Now.Subtract(dtStart).TotalMinutes, 3);
 
                     OutputEntity minuteEntity = new OutputEntity()
                     {

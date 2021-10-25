@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using TwitterStreamProduce.SharedLibrary.Models;
 
 namespace TwitterStreamProduce.SharedLibrary
@@ -17,18 +18,36 @@ namespace TwitterStreamProduce.SharedLibrary
 
             try
             {
-                lock (_fileAccess)
+                bool IsLocked = FileIsLocked(strFullName);
+
+                if (IsLocked) Thread.Sleep(500);
+
+                using (StreamWriter sw = File.AppendText(strFullName))
                 {
-                    using (StreamWriter sw = File.AppendText(strFullName))
-                    {
-                        sw.WriteLine(strJson);
-                    }
+                    sw.WriteLine(strJson);
                 }
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
+        }
+
+        private static bool FileIsLocked(string strFullFileName)
+        {
+            bool blnReturn = false;
+            FileStream fs;
+            try
+            {
+                fs = File.Open(strFullFileName, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
+                fs.Close();
+            }
+            catch (IOException ex)
+            {
+                blnReturn = true;
+            }
+
+            return blnReturn;
         }
     }
 }

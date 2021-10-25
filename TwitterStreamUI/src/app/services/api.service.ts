@@ -15,12 +15,16 @@ export class ApiDataService  {
   constructor(private http: HttpClient) { }
 
   public getData(): Observable<ApiDataModel[]> {
-    return this.http.get<ApiDataModel[]>(this.accessPointUrl)
-              .pipe(map((response: ApiDataModel[]) => response));
-  }
+    var urlGet = this.http.get<ApiDataModel[]>(this.accessPointUrl);
+    var apidata = new Observable<ApiDataModel[]>();
 
-  private handleError(error: any): Promise<any> {
-    console.error('An error occurred', error);
-    return Promise.reject(error.message || error);
+    try {
+      apidata = urlGet.pipe(map((response: ApiDataModel[]) => response));
+    }
+    catch(e) {
+      alert(e);
+    }
+
+    return apidata;
   }
 }

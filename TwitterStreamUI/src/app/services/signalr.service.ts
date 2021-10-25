@@ -20,6 +20,7 @@ export class SignalrService {
   }
 
   public init() {
+    window.localStorage.clear();
     this.hubConnection = new signalR.HubConnectionBuilder()
                               .configureLogging(signalR.LogLevel.Information)
                               .withUrl(environment.signalrHubUrl) // the SignalR server url as set in the .NET Project properties and Startup class
@@ -36,7 +37,7 @@ export class SignalrService {
 
     this.hubConnection.on("ReceiveMQMessage", (data: any) => {
       //debugger;
-      this.messages.next(data);
+      this.messages.next(data as SignalRDataModel);
       //console.log(JSON.stringify(this.messages));
     });
   }
@@ -58,15 +59,20 @@ export class SignalrService {
 
     if (messagesLocal !== null) {
       messagesResponse = JSON.parse(messagesLocal);
-      //messagesResponse = messagesResponse[messagesResponse.length - 1];
 
       for(var i = 0; i < messagesResponse.length; i++)
       {       
         var strJson = JSON.stringify(messagesResponse[i]);
 
         if ( strJson !== 'undefined' && strJson !== null ) {  
-          var objJson: SignalRDataModel = JSON.parse(strJson);
-          messagesResponseJson.push(objJson);
+          try
+          {
+            var objJson: SignalRDataModel = JSON.parse(strJson);
+            messagesResponseJson.unshift(objJson);
+          }
+          catch(e) {
+            alert(e)
+          }          
         }
       }
     }
